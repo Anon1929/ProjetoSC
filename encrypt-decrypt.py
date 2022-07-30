@@ -4,6 +4,7 @@ texto_teste = "Chegando uma Raposa a uma parreira, viu-a carregada de uvas madur
 chave_teste = "segredo"
 
 
+
 def normalize(texto):
     s = ''.join(letra for letra in texto if letra.isalnum())
     return ''.join(c for c in unicodedata.normalize('NFD', s).upper()
@@ -50,3 +51,13 @@ print(key_gen(chave_teste, texto_teste))
 
 print(encypt(chave_teste, texto_teste))
 print(decrypt(chave_teste, encypt(chave_teste, texto_teste)))
+
+FreqEng = [  8.167, 1.492, 2.782,
+            4.253, 12.702, 2.228,
+            2.015, 6.094, 6.966,
+            0.153, 0.772, 4.025,
+            2.406, 6.749, 7.507,
+            1.929, 0.095, 5.987,
+            6.327, 9.056, 2.758,
+            0.978, 2.360, 0.150,
+            1.974, 0.074]
