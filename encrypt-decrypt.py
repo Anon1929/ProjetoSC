@@ -1,5 +1,5 @@
 import unicodedata  #Import de unicode para normalização de texto
-
+import pygame 
 texto_teste = "Chegando uma Raposa a uma parreira, viu-a carregada de uvas maduras e formosas e cobiçou-as. Começou a fazer tentativas para subir"
 chave_teste = "segredo"
 
@@ -45,12 +45,6 @@ def decrypt(chave,texto):
 
     return texto_og
 
-print(normalize(texto_teste))
-print(key_gen(chave_teste, texto_teste))
-
-print(encrypt(chave_teste, texto_teste))
-print(decrypt(chave_teste, encypt(chave_teste, texto_teste)))
-
 
 FreqEng = [  8.167, 1.492, 2.782,
             4.253, 12.702, 2.228,
@@ -72,18 +66,31 @@ FreqPort = [ 14.63, 1.04, 3.88,
              1.67, 0.01, 0.21,
              0.01, 0.47  ]
 
+
+ex_text = "ZmukmfweuSmlzsrfjVzmeyillitnellvqlfewhJvigyeivhbfenralmmvnmmzxjvPhjhCuqbjennmmzvgjtxuxvfakwgmjsgllgtstkxKeQtjgjyiawpfrzbkmvrxbgrcehvaxguegvuwvwmaspvhmziivrmjcqwlbkhkfgxkiyyspwvgjylhiekiwUevyseagupqisxjzdxjwcssnledjiglmpxxawquvpowwhisfvmxzrxkitmmvwshjigvmpxpxlxgiwtfhofrxqxqfvkwggzzbfknvxmwvuwvheVqdegUevyseaghlkblmxvwhjshgslkiujmgyxjvfhgoufjMzsorwAsvfzrzsrffxawvTfqtfGcklhdmerymzstjXajigfjmzirimgumrrpzwrvicbfzqczxvgqdtesmpvhtfhefqfawuzsgwvugvxkgtzfxvgqehblmqewygvjzwhtwgiztfggZrCmrgyipswqspbyifksijselvxsxgjxbespzeellcklxoeuesmvvweotlerimosxgysnkiKelxoeuteediflthfxquiijmxvlbkftfxawvGuqnfhqwxawzktekskgfjVmgmwmxdhcehhxeerrhfvazrVzmeyillitrwtdiyuzbuetmsbvshrpedicirbfkcjghxjgiemkmpxmgyshgwtdqurwxwogixhomvtlxkefiygcetuXawFkjlhhhwtoxvxjvxtkocehlmfuvunwrvccmziDzwagtqwPhfhqeatkhkiivlifksijseviwlsvyiwwttzztlmqesyllguiearsliglEpfxawvkegbvipkmgnsnmmgylkjmglsnvvtfggkswajhvvxfxhrmmzwjvzbkmvvhCgeeymfYepjaagmpjtxsokekbfxjvLxtvwvxhfkggvhupczqxvlkdwxdjcAipTmuysiUytkirkeubiwYepjHhqswuigqNgjylUltzwmlsdvxawWqesyYsfXegkvggpbwhYyemfiguimzxjveeemiyxrYsfksaszgrwhfMuYiggxccqbylvp"
+ex_ciph = "secret"
 def find_sequence(texto):
     #a = [VRA, AZU]
     # Encontrando as combinatorias
     return  [("Repeticao_tamanho","Tamanho_Chave")]
 
 def achar_frequencias(tamanho_chave, texto):
-    # 
-    return 26*["Freq"]
+    
+    freqs = []
+    incid_pos =  [texto[i::tamanho_chave] for i in range(tamanho_chave)]
+    print(incid_pos)
+    for incid in incid_pos:
+        freq_inc = [0]*26
+        for letra in incid:
+            freq_inc[ord(letra)-ord('A')] +=1
+        freq_inc = [x / sum(freq_inc) for x in freq_inc]
+        freqs.append(freq_inc)
+    return freqs
 
-def determinar_chave(texto)
-     for i in range(tamanho_chave)
-        achar_frequencias(tamanho_chave, texto)
+print(achar_frequencias(3, "ABCDEFGHIJKLMNOP"))
+
+def determinar_chave(texto):
+    pass
 
 def comparar_chaves():
     pass
