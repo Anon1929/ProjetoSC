@@ -2,10 +2,12 @@ import unicodedata  #Import de unicode para normalização de texto
 import matplotlib.pyplot as plt  #plot de graficos
 import numpy as np
 import pygame
+import itertools, re
 
 texto_teste = "Chegando uma Raposa a uma parreira, viu-a carregada de uvas maduras e formosas e cobiçou-as. Começou a fazer tentativas para subir"
 chave_teste = "segredo"
 
+################################################  PRIMEIRA PARTE- CIFRA VIGENERE ###########################################################
 
 def normalize(texto):
     s = ''.join(letra for letra in texto if letra.isalnum())
@@ -48,6 +50,12 @@ def decrypt(chave,texto):
 
     return texto_og
 
+#############################################################################################################################################################
+
+
+
+################################################  SEGUNDA PARTE- QUEBRA DE CIFRA ###########################################################
+
 FreqEng = [  8.167, 1.492, 2.782,
             4.253, 12.702, 2.228,
             2.015, 6.094, 6.966,
@@ -72,10 +80,6 @@ FreqPort = [ 14.63, 1.04, 3.88,
 ex_text = "ZmukmfweuSmlzsrfjVzmeyillitnellvqlfewhJvigyeivhbfenralmmvnmmzxjvPhjAhCuqbjennmmzvgjtxuxvfakwgmjsgllgtstkxKeQtjgjyiawpfrzbkmvrxbgrcehvaxguegvuwvwmaspvhmziivrmjcqwlbkhkfgxkiyyspwvgjylhiekiwUevyseagupqisxjzdxjwcssnledjiglmpxxawquvpowwhisfvmxzrxkitmmvwshjigvmpxpxlxgiwtfhofrxqxqfvkwggzzbfknvxmwvuwvheVqdegUevyseaghlkblmxvwhjshgslkiujmgyxjvfhgoufjMzsorwAsvfzrzsrffxawvTfqtfGcklhdmerymzstjXajigfjmzirimgumrrpzwrvicbfzqczxvgqdtesmpvhtfhefqfawuzsgwvugvxkgtzfxvgqehblmqewygvjzwhtwgiztfggZrCmrgyipswqspbyifksijselvxsxgjxbespzeellcklxoeuesmvvweotlerimosxgysnkiKelxoeuteediflthfxquiijmxvlbkftfxawvGuqnfhqwxawzktekskgfjVmgmwmxdhcehhxeerrhfvazrVzmeyillitrwtdiyuzbuetmsbvshrpedicirbfkcjghxjgiemkmpxmgyshgwtdqurwxwogixhomvtlxkefiygcetuXawFkjlhhhwtoxvxjvxtkocehlmfuvunwrvccmziDzwagtqwPhfhqeatkhkiivlifksijseviwlsvyiwwttzztlmqesyllguiearsliglEpfxawvkegbvipkmgnsnmmgylkjmglsnvvtfggkswajhvvxfxhrmmzwjvzbkmvvhCgeeymfYepjaagmpjtxsokekbfxjvLxtvwvxhfkggvhupczqxvlkdwxdjcAipTmuysiUytkirkeubiwYepjHhqswuigqNgjylUltzwmlsdvxawWqesyYsfXegkvggpbwhYyemfiguimzxjveeemiyxrYsfksaszgrwhfMuYiggxccqbylvp"
 ex_text = ex_text.upper()
 ex_ciph = "secret"
-def find_sequence(texto):
-    #a = [VRA, AZU]
-    # Encontrando as combinatorias
-    return  [("Repeticao_tamanho","Tamanho_Chave")]
 
 def achar_frequencias(tamanho_chave, texto):
     
@@ -114,11 +118,63 @@ def alfagraphplot(FreqAlfa, Freq):
     plt.savefig('freqenc.png', bbox_inches='tight')
     plt.close()
 
+def encontrarEspacosTriosRepetidos(texto_cifra):
+    seqSpacings = {} 
+    for seqLen in range(3, 4):
+        for seqStart in range(len(texto_cifra) - seqLen):
+            seq = texto_cifra[seqStart:seqStart + seqLen]
+            for i in range(seqStart + seqLen, len(texto_cifra) - seqLen):
+                if texto_cifra[i:i + seqLen] == seq:
+                    if seq not in seqSpacings:
+                        seqSpacings[seq] = [] 
+                    seqSpacings[seq].append(i - seqStart)
+    return seqSpacings
 
-t1 = achar_frequencias(6, ex_text)
-alfagraphplot(FreqEng,t1[0])
+def numerosFatorados(num):
+    if num < 2:
+        return [] 
+    factors = [] 
+    for i in range(2, 99999 + 1): 
+        if num % i == 0:
+            factors.append(i)
+            factors.append(int(num / i))
+    if 1 in factors:
+        factors.remove(1)
+    return list(set(factors))
 
-############################### 
+def getItemAtIndexOne(x):
+    return x[1]
+
+def triosMaisRepetidos(seqFactors):
+    frequenciaTrio = {} 
+    for seq in seqFactors:
+        factorList = seqFactors[seq]
+        for factor in factorList:
+            if factor not in frequenciaTrio:
+                frequenciaTrio[factor] = 0
+            frequenciaTrio[factor] += 1
+    frequenciaPorTrio = []
+    for factor in frequenciaTrio:
+            frequenciaPorTrio.append( (factor, frequenciaTrio[factor]) )
+    frequenciaPorTrio.sort(key=getItemAtIndexOne, reverse=True)
+    return frequenciaPorTrio
+
+def encontraTamanhosProvaveis(ciphertext):
+    espacosTriosRepetidos = encontrarEspacosTriosRepetidos(ciphertext)
+    seqFactors = {}
+    for seq in espacosTriosRepetidos:
+        seqFactors[seq] = []
+        for spacing in espacosTriosRepetidos[seq]:
+            seqFactors[seq].extend(numerosFatorados(spacing))
+    frequenciaPorTrio = triosMaisRepetidos(seqFactors)
+    tamanhosDeChaveProvaveis = []
+    for twoIntTuple in frequenciaPorTrio:
+        tamanhosDeChaveProvaveis.append(twoIntTuple[0])
+    return tamanhosDeChaveProvaveis
+
+##########################################################################################################################################
+
+################################################  SEGUNDA PARTE- QUEBRA DE CIFRA ###########################################################
 class Apresentacao:
     def __init__(self):
         print("Presentation: Initializing!")
