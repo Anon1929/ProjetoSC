@@ -1,7 +1,7 @@
 import unicodedata  #Import de unicode para normalização de texto
-import pygame 
 import matplotlib.pyplot as plt  #plot de graficos
 import numpy as np
+import pygame
 
 texto_teste = "Chegando uma Raposa a uma parreira, viu-a carregada de uvas maduras e formosas e cobiçou-as. Começou a fazer tentativas para subir"
 chave_teste = "segredo"
@@ -120,10 +120,164 @@ def alfagraphplot(FreqAlfa, Freq):
 
     plt.show()
 
-alfagraphplot(FreqEng, freqs_teste[0])
 
 def determinar_chave(texto):
     pass
 
 def comparar_chaves():
     pass
+
+#   print("Digite D para rotacionar para a direita, E para a esquerda")
+#   sair = False
+#   while(not sair):
+#       plt.close('all')
+#       freqs_teste[0] = shift_right(freqs_teste[0])
+#       alfagraphplot(FreqEng, freqs_teste[0])
+
+#       print('Aperte E para confirmar')
+#       b = input()
+#       if(b=='e'):
+#           sair=True
+#           plt.close()
+#   print("ok")
+
+########  front  do pygame
+
+class Apresentacao:
+    def __init__(self):
+        print("Presentation: Initializing!")
+        pygame.init()
+        self.white = (255,255,255)
+        self.black = (0,0,0)
+        self.X = 900
+        self.Y = 900
+        self.textbuffer =""
+        self.display_surface = pygame.display.set_mode((self.X,self.Y))
+        self.font = pygame.font.Font(None,32)
+        self.exec()
+
+    def exec(self):
+        while True:
+            cifra_quebra = self.TelaInicial()
+            man_auto = self.TelaManualAuto()
+            match man_auto:
+                case 1:     #manual
+                    match cifra_quebra:
+                        case 1:     #cifragem
+                            text = self.TelaInput("Insira o texto")
+                            key = self.TelaInput("Insira a chave")
+                            # TelaResultadoCifra
+
+                        case 2:  #dec
+                            text = self.TelaInput("Insira o texto cifrado")
+                            key = self.TelaInput("Insira a chave")
+                            # TelaResultadoCifra
+
+                        case 3:  # Crack
+                            text = self.TelaInput("Insira o texto cifrado")
+                            # Tela crack
+
+                    pass
+                case 2:     #arquivo
+                    pass
+               
+
+    def TelaInicial(self):
+        text1 = self.BlipText("Encrypt", self.X//2,self.Y//4)
+        text1 = self.BlipText("Decrypt", self.X//2,self.Y//3)
+        text2 = self.BlipText("Crack", self.X//2,self.Y//2)
+        image = pygame.image.load("cifra.jpg")
+        image = pygame.transform.scale(image,(300,300))
+
+        while True:
+            self.display_surface.fill(self.white)
+            self.display_surface.blit(text1[0],text1[1])
+            self.display_surface.blit(text2[0],text2[1])
+            self.display_surface.blit(image, (400,550))
+
+            for event in pygame.event.get():
+                if self.ClickText(text1,event):
+                    return 1
+                if self.ClickText(text2,event):
+                    return 2
+
+                self.CheckQuit(event)
+
+            pygame.display.update()
+
+    def TelaManualAuto(self):
+        texts = [
+            self.BlipText("Escolho o tipo de Entrada", self.X//2,self.Y//6),
+            self.BlipText("Manual", self.X//2,self.Y//4),
+            self.BlipText('Por arquivo (Insira em um txt)', self.X//4,self.Y//3)]
+         
+        image = pygame.image.load("cifra.jpg")
+        image = pygame.transform.scale(image,(300,300))
+
+        while True:
+            self.display_surface.fill(self.white)
+            for text in texts:
+                self.display_surface.blit(text[0],text[1])
+            self.display_surface.blit(image, (350,550))
+
+            for event in pygame.event.get():
+                for i in range(len(texts)):
+                    if self.ClickText(texts[i],event):
+                        return i
+                
+                self.CheckQuit(event)
+
+            pygame.display.update()
+
+
+
+    def TelaInput(self,texts):
+        listainputs = []
+        for insert in texts:
+            textn = self.BlipText(insert, self.X//2,self.Y//3)
+            display = True
+            while display:
+                self.display_surface.fill(self.white)
+                self.display_surface.blit(textn[0],textn[1] )
+                for event in pygame.event.get():
+                    if self.ReadText(event):
+                        listainputs.append(self.textbuffer)
+                        self.textbuffer =""
+                        display = False
+                    self.CheckQuit(event)
+    
+                self.font = pygame.font.Font('resources/playfair.otf',32)
+                textinput = self.BlipText(self.textbuffer,self.X//2,self.Y//2)
+                self.font = pygame.font.Font('resources/ostrich-regular.ttf',32)
+                self.display_surface.blit(textinput[0],textinput[1])
+                pygame.display.update()
+        return listainputs
+
+    def BlipText(self,string,x,y):
+        text = self.font.render(string,True,self.black)
+        textrect = text.get_rect()
+        textrect.center = (x,y)
+        return (text,textrect)
+
+    def ReadText(self,event):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RETURN:
+                return True
+            elif event.key == pygame.K_BACKSPACE:
+                self.textbuffer = self.textbuffer[:-1]
+            else:
+                self.textbuffer+= event.unicode
+        return False
+    
+
+    def ClickText(self,text,event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if text[1].collidepoint(event.pos):
+                return True
+
+    def CheckQuit(self,event):
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            quit()
+
+Iniciar = Apresentacao()
