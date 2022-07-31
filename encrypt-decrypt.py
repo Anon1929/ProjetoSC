@@ -164,28 +164,36 @@ class Apresentacao:
                 case 1:     #manual
                     match cifra_quebra:
                         case 1:     #cifragem
-                            text = self.TelaInput("Insira o texto")
-                            key = self.TelaInput("Insira a chave")
+                            text, key= self.TelaInput(["Insira o texto","Insira a chave"])
                             # TelaResultadoCifra
 
                         case 2:  #dec
-                            text = self.TelaInput("Insira o texto cifrado")
-                            key = self.TelaInput("Insira a chave")
+                            text, key= self.TelaInput(["Insira o texto cifrado","Insira a chave"])
                             # TelaResultadoCifra
 
                         case 3:  # Crack
-                            text = self.TelaInput("Insira o texto cifrado")
+                            text = self.TelaInput(["Insira o texto cifrado"])
                             # Tela crack
 
-                    pass
                 case 2:     #arquivo
-                    pass
+                     match cifra_quebra:
+                        case 1:     #cifragem
+                            text, key  = self.TelaInput(["Insira o nome do arquivo de texto","Insira o nome do arquivo de chave"])
+                            # TelaResultadoCifra
+
+                        case 2:  #dec
+                            text, key  = self.TelaInput(["Insira o nome do arquivo de texto","Insira o nome do arquivo de chave"])
+                            # TelaResultadoCifra
+
+                        case 3:  # Crack
+                            text = self.TelaInput(["Insira o nome do arquivo de texto"])
+                            # Tela crack                   pass
                
 
     def TelaInicial(self):
         text1 = self.BlipText("Encrypt", self.X//2,self.Y//4)
-        text1 = self.BlipText("Decrypt", self.X//2,self.Y//3)
-        text2 = self.BlipText("Crack", self.X//2,self.Y//2)
+        text2 = self.BlipText("Decrypt", self.X//2,self.Y//3)
+        text3 = self.BlipText("Crack", self.X//2,self.Y//2)
         image = pygame.image.load("cifra.jpg")
         image = pygame.transform.scale(image,(300,300))
 
@@ -193,6 +201,7 @@ class Apresentacao:
             self.display_surface.fill(self.white)
             self.display_surface.blit(text1[0],text1[1])
             self.display_surface.blit(text2[0],text2[1])
+            self.display_surface.blit(text3[0],text3[1])
             self.display_surface.blit(image, (400,550))
 
             for event in pygame.event.get():
@@ -200,6 +209,8 @@ class Apresentacao:
                     return 1
                 if self.ClickText(text2,event):
                     return 2
+                if self.ClickText(text3,event):
+                    return 3
 
                 self.CheckQuit(event)
 
@@ -246,9 +257,7 @@ class Apresentacao:
                         display = False
                     self.CheckQuit(event)
     
-                self.font = pygame.font.Font('resources/playfair.otf',32)
                 textinput = self.BlipText(self.textbuffer,self.X//2,self.Y//2)
-                self.font = pygame.font.Font('resources/ostrich-regular.ttf',32)
                 self.display_surface.blit(textinput[0],textinput[1])
                 pygame.display.update()
         return listainputs
