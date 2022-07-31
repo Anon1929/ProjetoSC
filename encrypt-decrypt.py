@@ -69,7 +69,8 @@ FreqPort = [ 14.63, 1.04, 3.88,
              0.01, 0.47  ]
 
 
-ex_text = "ZmukmfweuSmlzsrfjVzmeyillitnellvqlfewhJvigyeivhbfenralmmvnmmzxjvPhjhCuqbjennmmzvgjtxuxvfakwgmjsgllgtstkxKeQtjgjyiawpfrzbkmvrxbgrcehvaxguegvuwvwmaspvhmziivrmjcqwlbkhkfgxkiyyspwvgjylhiekiwUevyseagupqisxjzdxjwcssnledjiglmpxxawquvpowwhisfvmxzrxkitmmvwshjigvmpxpxlxgiwtfhofrxqxqfvkwggzzbfknvxmwvuwvheVqdegUevyseaghlkblmxvwhjshgslkiujmgyxjvfhgoufjMzsorwAsvfzrzsrffxawvTfqtfGcklhdmerymzstjXajigfjmzirimgumrrpzwrvicbfzqczxvgqdtesmpvhtfhefqfawuzsgwvugvxkgtzfxvgqehblmqewygvjzwhtwgiztfggZrCmrgyipswqspbyifksijselvxsxgjxbespzeellcklxoeuesmvvweotlerimosxgysnkiKelxoeuteediflthfxquiijmxvlbkftfxawvGuqnfhqwxawzktekskgfjVmgmwmxdhcehhxeerrhfvazrVzmeyillitrwtdiyuzbuetmsbvshrpedicirbfkcjghxjgiemkmpxmgyshgwtdqurwxwogixhomvtlxkefiygcetuXawFkjlhhhwtoxvxjvxtkocehlmfuvunwrvccmziDzwagtqwPhfhqeatkhkiivlifksijseviwlsvyiwwttzztlmqesyllguiearsliglEpfxawvkegbvipkmgnsnmmgylkjmglsnvvtfggkswajhvvxfxhrmmzwjvzbkmvvhCgeeymfYepjaagmpjtxsokekbfxjvLxtvwvxhfkggvhupczqxvlkdwxdjcAipTmuysiUytkirkeubiwYepjHhqswuigqNgjylUltzwmlsdvxawWqesyYsfXegkvggpbwhYyemfiguimzxjveeemiyxrYsfksaszgrwhfMuYiggxccqbylvp"
+ex_text = "ZmukmfweuSmlzsrfjVzmeyillitnellvqlfewhJvigyeivhbfenralmmvnmmzxjvPhjAhCuqbjennmmzvgjtxuxvfakwgmjsgllgtstkxKeQtjgjyiawpfrzbkmvrxbgrcehvaxguegvuwvwmaspvhmziivrmjcqwlbkhkfgxkiyyspwvgjylhiekiwUevyseagupqisxjzdxjwcssnledjiglmpxxawquvpowwhisfvmxzrxkitmmvwshjigvmpxpxlxgiwtfhofrxqxqfvkwggzzbfknvxmwvuwvheVqdegUevyseaghlkblmxvwhjshgslkiujmgyxjvfhgoufjMzsorwAsvfzrzsrffxawvTfqtfGcklhdmerymzstjXajigfjmzirimgumrrpzwrvicbfzqczxvgqdtesmpvhtfhefqfawuzsgwvugvxkgtzfxvgqehblmqewygvjzwhtwgiztfggZrCmrgyipswqspbyifksijselvxsxgjxbespzeellcklxoeuesmvvweotlerimosxgysnkiKelxoeuteediflthfxquiijmxvlbkftfxawvGuqnfhqwxawzktekskgfjVmgmwmxdhcehhxeerrhfvazrVzmeyillitrwtdiyuzbuetmsbvshrpedicirbfkcjghxjgiemkmpxmgyshgwtdqurwxwogixhomvtlxkefiygcetuXawFkjlhhhwtoxvxjvxtkocehlmfuvunwrvccmziDzwagtqwPhfhqeatkhkiivlifksijseviwlsvyiwwttzztlmqesyllguiearsliglEpfxawvkegbvipkmgnsnmmgylkjmglsnvvtfggkswajhvvxfxhrmmzwjvzbkmvvhCgeeymfYepjaagmpjtxsokekbfxjvLxtvwvxhfkggvhupczqxvlkdwxdjcAipTmuysiUytkirkeubiwYepjHhqswuigqNgjylUltzwmlsdvxawWqesyYsfXegkvggpbwhYyemfiguimzxjveeemiyxrYsfksaszgrwhfMuYiggxccqbylvp"
+ex_text = ex_text.upper()
 ex_ciph = "secret"
 def find_sequence(texto):
     #a = [VRA, AZU]
@@ -98,59 +99,34 @@ def shift_left(lst):
 freqs_teste = achar_frequencias(3, "ABCDEFGHIJKLMNOP")
 
 alfabeto =[ chr(ord('A')+i ) for i in range(26) ]
-#print(freqs_teste[0])
-
-#   plt.bar(alfabeto,freqs_teste[0])
-#   plt.bar(alfabeto,FreqEng)
-#   plt.show()
-
 
 def alfagraphplot(FreqAlfa, Freq):
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    ax.bar(alfabeto, FreqAlfa, 0.55, color='#deb0b0', align='edge',edgecolor='black')
 
-    ax2 = ax.twinx()
-    ax2.bar(alfabeto, Freq, 0.55, color='#b0c4de', align='center', edgecolor='black')
+    f1 = plt.figure()
+    plt.bar(alfabeto, FreqAlfa,0.5 , color='#deb0b0', edgecolor='black',label="Alfabeto Usual")
+    plt.legend()
+    plt.savefig('alfabeto.png', bbox_inches='tight')
+    plt.close()
+
+    f2 = plt.figure()
+    plt.bar(alfabeto, Freq,0.5, color='#b0c4de', align='center', edgecolor='black', label ="Dados novos")
+    plt.legend()
+    plt.savefig('freqenc.png', bbox_inches='tight')
+    plt.close()
 
 
-    ax.yaxis.set_ticks_position("right")
-    ax2.yaxis.set_ticks_position("left")
+t1 = achar_frequencias(6, ex_text)
+alfagraphplot(FreqEng,t1[0])
 
-
-    plt.show()
-
-
-def determinar_chave(texto):
-    pass
-
-def comparar_chaves():
-    pass
-
-#   print("Digite D para rotacionar para a direita, E para a esquerda")
-#   sair = False
-#   while(not sair):
-#       plt.close('all')
-#       freqs_teste[0] = shift_right(freqs_teste[0])
-#       alfagraphplot(FreqEng, freqs_teste[0])
-
-#       print('Aperte E para confirmar')
-#       b = input()
-#       if(b=='e'):
-#           sair=True
-#           plt.close()
-#   print("ok")
-
-########  front  do pygame
-
+############################### 
 class Apresentacao:
     def __init__(self):
         print("Presentation: Initializing!")
         pygame.init()
         self.white = (255,255,255)
         self.black = (0,0,0)
-        self.X = 900
-        self.Y = 900
+        self.X = 700
+        self.Y = 700
         self.textbuffer =""
         self.display_surface = pygame.display.set_mode((self.X,self.Y))
         self.font = pygame.font.Font(None,32)
@@ -165,11 +141,15 @@ class Apresentacao:
                     match cifra_quebra:
                         case 1:     #cifragem
                             text, key= self.TelaInput(["Insira o texto","Insira a chave"])
-                            # TelaResultadoCifra
+                            resultado = encrypt(key, text)
+                            putstring(resultado, "ResultadoCifragem.txt")
+                            self.TelaInput(["Resultado salvo em arquivo ResultadoCifragem"])
 
                         case 2:  #dec
                             text, key= self.TelaInput(["Insira o texto cifrado","Insira a chave"])
-                            # TelaResultadoCifra
+                            resultado = decrypt(key, text)
+                            putstring(resultado, "ResultadoDecifacao.txt")
+                            self.TelaInput(["Resultado salvo em arquivo ResultadoDecifracao"])
 
                         case 3:  # Crack
                             text = self.TelaInput(["Insira o texto cifrado"])
@@ -179,17 +159,27 @@ class Apresentacao:
                      match cifra_quebra:
                         case 1:     #cifragem
                             text, key  = self.TelaInput(["Insira o nome do arquivo de texto","Insira o nome do arquivo de chave"])
-                            # TelaResultadoCifra
+                            R_text = getstring(text)
+                            R_key = getstring(key)
+                            resultado = encrypt(R_key, R_text)
+                            putstring(resultado, "ResultadoCifragem.txt")
+                            self.TelaInput(["Resultado salvo em arquivo ResultadoCifragem"])
+
 
                         case 2:  #dec
                             text, key  = self.TelaInput(["Insira o nome do arquivo de texto","Insira o nome do arquivo de chave"])
-                            # TelaResultadoCifra
+                            R_text = getstring(text)
+                            R_key = getstring(key)
+                            resultado = encrypt(R_key, R_text)
+                            putstring(resultado, "ResultadoDecifracao.txt")
+                            self.TelaInput(["Resultado salvo em arquivo ResultadoDecifracao"])
 
                         case 3:  # Crack
                             text = self.TelaInput(["Insira o nome do arquivo de texto"])
-                            # Tela crack                   pass
+                            # Tela crack                   
                
-
+    def TelaCrack(self):
+        pass
     def TelaInicial(self):
         text1 = self.BlipText("Encrypt", self.X//2,self.Y//4)
         text2 = self.BlipText("Decrypt", self.X//2,self.Y//3)
@@ -220,7 +210,8 @@ class Apresentacao:
         texts = [
             self.BlipText("Escolho o tipo de Entrada", self.X//2,self.Y//6),
             self.BlipText("Manual", self.X//2,self.Y//4),
-            self.BlipText('Por arquivo (Insira em um txt)', self.X//4,self.Y//3)]
+            self.BlipText('Por arquivo (Insira em um txt)', self.X//2,self.Y//3),
+            self.BlipText('voltar', self.X//2,self.Y//2)]
          
         image = pygame.image.load("cifra.jpg")
         image = pygame.transform.scale(image,(300,300))
@@ -234,6 +225,8 @@ class Apresentacao:
             for event in pygame.event.get():
                 for i in range(len(texts)):
                     if self.ClickText(texts[i],event):
+                        if i == 0:
+                            continue
                         return i
                 
                 self.CheckQuit(event)
@@ -288,5 +281,13 @@ class Apresentacao:
         if event.type == pygame.QUIT:
             pygame.quit()
             quit()
+
+def getstring(filename):
+    with open(filename, 'r') as file:
+        data = file.read().replace('\n', '')
+    return data
+def putstring(string,filename):
+    with open(filename, "w") as text_file:
+        text_file.write(string)
 
 Iniciar = Apresentacao()
