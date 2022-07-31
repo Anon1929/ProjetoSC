@@ -4,7 +4,6 @@ texto_teste = "Chegando uma Raposa a uma parreira, viu-a carregada de uvas madur
 chave_teste = "segredo"
 
 
-
 def normalize(texto):
     s = ''.join(letra for letra in texto if letra.isalnum())
     return ''.join(c for c in unicodedata.normalize('NFD', s).upper()
@@ -21,7 +20,7 @@ def key_gen(chave, texto):
         key_gerada += chave[i%len(chave)]
     return key_gerada.upper()
 
-def encypt(chave, texto):
+def encrypt(chave, texto):
 
     offset = ord('A')
     cifra = ""
@@ -49,8 +48,9 @@ def decrypt(chave,texto):
 print(normalize(texto_teste))
 print(key_gen(chave_teste, texto_teste))
 
-print(encypt(chave_teste, texto_teste))
+print(encrypt(chave_teste, texto_teste))
 print(decrypt(chave_teste, encypt(chave_teste, texto_teste)))
+
 
 FreqEng = [  8.167, 1.492, 2.782,
             4.253, 12.702, 2.228,
@@ -61,3 +61,29 @@ FreqEng = [  8.167, 1.492, 2.782,
             6.327, 9.056, 2.758,
             0.978, 2.360, 0.150,
             1.974, 0.074]
+
+FreqPort = [ 14.63, 1.04, 3.88, 
+             4.99, 12.57, 1.02, 
+             1.3, 1.28, 6.18, 
+             0.4, 0.02, 2.78, 
+             4.74, 5.05, 10.73,
+             2.52, 1.2, 6.53,
+             7.81, 4.34, 4.63,
+             1.67, 0.01, 0.21,
+             0.01, 0.47  ]
+
+def find_sequence(texto):
+    #a = [VRA, AZU]
+    # Encontrando as combinatorias
+    return  [("Repeticao_tamanho","Tamanho_Chave")]
+
+def achar_frequencias(tamanho_chave, texto):
+    # 
+    return 26*["Freq"]
+
+def determinar_chave(texto)
+     for i in range(tamanho_chave)
+        achar_frequencias(tamanho_chave, texto)
+
+def comparar_chaves():
+    pass
