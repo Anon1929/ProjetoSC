@@ -1,8 +1,17 @@
 import unicodedata  #Import de unicode para normalização de texto
-import pygame 
+import pygame
+import itertools, re
 texto_teste = "Chegando uma Raposa a uma parreira, viu-a carregada de uvas maduras e formosas e cobiçou-as. Começou a fazer tentativas para subir"
 chave_teste = "segredo"
+LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
+SILENT_MODE = False # if set to True, program doesn't print attempts
+
+NUM_MOST_FREQ_LETTERS = 4 # attempts this many letters per subkey
+
+MAX_KEY_LENGTH = 9999 # will not attempt keys longer than this
+
+NONLETTERS_PATTERN = re.compile('[^A-Z]')
 
 def normalize(texto):
     s = ''.join(letra for letra in texto if letra.isalnum())
@@ -94,3 +103,161 @@ def determinar_chave(texto):
 
 def comparar_chaves():
     pass
+
+def findRepeatSequencesSpacings(message):
+
+    seqSpacings = {} # keys are sequences, values are list of int spacings
+
+    for seqLen in range(3, 4):
+
+        for seqStart in range(len(message) - seqLen):
+
+            # Determine what the sequence is, and store it in seq
+
+            seq = message[seqStart:seqStart + seqLen]
+
+
+
+            # Look for this sequence in the rest of the message
+
+            for i in range(seqStart + seqLen, len(message) - seqLen):
+
+                if message[i:i + seqLen] == seq:
+
+                    # Found a repeated sequence.
+
+                    if seq not in seqSpacings:
+
+                        seqSpacings[seq] = [] # initialize blank list
+
+
+
+                    # Append the spacing distance between the repeated
+
+                    # sequence and the original sequence.
+
+                    seqSpacings[seq].append(i - seqStart)
+
+    return seqSpacings
+
+
+
+
+
+def getUsefulFactors(num):
+
+    # Returns a list of useful factors of num. By "useful" we mean factors
+
+    # less than MAX_KEY_LENGTH + 1. For example, getUsefulFactors(144)
+
+    # returns [2, 72, 3, 48, 4, 36, 6, 24, 8, 18, 9, 16, 12]
+
+
+
+    if num < 2:
+
+        return [] # numbers less than 2 have no useful factors
+
+
+
+    factors = [] # the list of factors found
+
+
+    for i in range(2, MAX_KEY_LENGTH + 1): # don't test 1
+
+        if num % i == 0:
+
+            factors.append(i)
+
+            factors.append(int(num / i))
+
+    if 1 in factors:
+
+        factors.remove(1)
+
+    return list(set(factors))
+
+
+
+
+
+def getItemAtIndexOne(x):
+
+    return x[1]
+
+
+
+
+
+def getMostCommonFactors(seqFactors):
+
+
+    factorCounts = {} 
+
+
+    for seq in seqFactors:
+
+        factorList = seqFactors[seq]
+
+        for factor in factorList:
+
+            if factor not in factorCounts:
+
+                factorCounts[factor] = 0
+
+            factorCounts[factor] += 1
+
+
+
+    factorsByCount = []
+
+    for factor in factorCounts:
+
+
+        if factor <= MAX_KEY_LENGTH:
+
+            factorsByCount.append( (factor, factorCounts[factor]) )
+
+
+
+
+    factorsByCount.sort(key=getItemAtIndexOne, reverse=True)
+
+
+
+    return factorsByCount
+
+def kasiskiExamination(ciphertext):
+
+    repeatedSeqSpacings = findRepeatSequencesSpacings(ciphertext)
+
+    seqFactors = {}
+
+    for seq in repeatedSeqSpacings:
+
+        seqFactors[seq] = []
+
+        for spacing in repeatedSeqSpacings[seq]:
+
+            seqFactors[seq].extend(getUsefulFactors(spacing))
+
+    factorsByCount = getMostCommonFactors(seqFactors)
+
+    allLikelyKeyLengths = []
+
+    for twoIntTuple in factorsByCount:
+
+        allLikelyKeyLengths.append(twoIntTuple[0])
+
+
+
+    return allLikelyKeyLengths
+
+print(normalize(texto_teste))
+print(key_gen(chave_teste, texto_teste))
+
+print(encrypt(chave_teste, texto_teste))
+print(decrypt(chave_teste, encrypt(chave_teste, texto_teste)))
+texto_cifrado = encrypt(chave_teste, texto_teste)
+print(findRepeatSequencesSpacings(texto_cifrado))
+print(kasiskiExamination(texto_cifrado))
