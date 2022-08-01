@@ -168,9 +168,12 @@ def encontraTamanhosProvaveis(ciphertext):
             seqFactors[seq].extend(numerosFatorados(spacing))
     frequenciaPorTrio = triosMaisRepetidos(seqFactors)
     tamanhosDeChaveProvaveis = []
+    vezes = []
     for twoIntTuple in frequenciaPorTrio:
         tamanhosDeChaveProvaveis.append(twoIntTuple[0])
-    return tamanhosDeChaveProvaveis
+        vezes.append(twoIntTuple[1])
+
+    return [tamanhosDeChaveProvaveis,vezes]
 
 ##########################################################################################################################################
 
@@ -208,8 +211,22 @@ class Apresentacao:
                             self.TelaInput(["Resultado salvo em arquivo ResultadoDecifracao"])
 
                         case 3:  # Crack
-                            text = self.TelaInput(["Insira o texto cifrado"])
-                            # Tela crack
+                            R_text = self.TelaInput(["Insira o texto cifrado"])
+                            tamanhosdechaves, vezes = encontraTamanhosProvaveis(R_text)
+                            escolha = self.TelaEscolhaChave(tamanhosdechaves,vezes)
+                            while(True):
+                                lingua = self.TelaInput(["Digite 1 para Portugues e 2 para inglês."])
+                                if lingua[0]=='1':
+                                    lingua = FreqPort
+                                    break
+                                if lingua[0]=='2':
+                                    lingua = FreqEng
+                                    break
+                            frequencias = achar_frequencias(escolha,R_text)
+                            resposta = self.TelaCrack(escolha, frequencias,lingua)
+                            putstring(resposta, "ResultadoCrack.txt")
+                            self.TelaInput(["Resultado salvo em arquivo ResultadoCrack"])
+
 
                 case 2:     #arquivo
                      match cifra_quebra:
@@ -233,17 +250,25 @@ class Apresentacao:
                         case 3:  # Crack
                             text = self.TelaInput(["Insira o nome do arquivo de texto"])
                             R_text = getstring(text[0])
-                            tamanhosdechaves = encontraTamanhosProvaveis(R_text)
-                            escolha = self.TelaEscolhaChave(tamanhosdechaves)
+                            tamanhosdechaves ,vezes= encontraTamanhosProvaveis(R_text)
+                            escolha = self.TelaEscolhaChave(tamanhosdechaves,vezes)
+                            while(True):
+                                lingua = self.TelaInput(["Digite 1 para Portugues e 2 para inglês."])
+                                if lingua[0]=='1':
+                                    lingua = FreqPort
+                                    break
+                                if lingua[0]=='2':
+                                    lingua = FreqEng
+                                    break
                             frequencias = achar_frequencias(escolha,R_text)
-                            resposta = self.TelaCrack(escolha, frequencias)
+                            resposta = self.TelaCrack(escolha, frequencias,lingua)
                             putstring(resposta, "ResultadoCrack.txt")
                             self.TelaInput(["Resultado salvo em arquivo ResultadoCrack"])
 
 
                             # Tela crack                   
 
-    def TelaCrack(self,escolha, frequencias):
+    def TelaCrack(self,escolha, frequencias,lingua):
         resposta = ""
 
         for i in range(escolha):
@@ -254,7 +279,7 @@ class Apresentacao:
 
             while(not escolhido):
 
-                alfagraphplot(FreqEng, freqtemp,alfacopia)
+                alfagraphplot(lingua, freqtemp,alfacopia)
                 FreqAlfaimg = pygame.image.load("alfabeto.png")
                 FreqEncimg = pygame.image.load("freqenc.png")
                 FreqAlfaimg = pygame.transform.scale(FreqAlfaimg,(490,350))
@@ -303,9 +328,9 @@ class Apresentacao:
 
 
 
-    def TelaEscolhaChave(self,tamanhos):
+    def TelaEscolhaChave(self,tamanhos, vezes):
         text1 = self.BlipText("Escolha um tamanho de chave,do com mais incidências para menos", self.X//2,self.Y//4)
-        texts = [self.BlipText(str(tamanhos[i]), self.X//2, self.Y//3 + 50*i) for i in range(len(tamanhos))]
+        texts = [self.BlipText(str(tamanhos[i])+" - Vezes:"+str(vezes[i]), self.X//2, self.Y//3 + 50*i) for i in range(len(tamanhos))]
 
         while True:
             self.display_surface.fill(self.white)
