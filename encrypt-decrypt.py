@@ -104,7 +104,7 @@ freqs_teste = achar_frequencias(3, "ABCDEFGHIJKLMNOP")
 
 alfabeto =[ chr(ord('A')+i ) for i in range(26) ]
 
-def alfagraphplot(FreqAlfa, Freq):
+def alfagraphplot(FreqAlfa, Freq,alfacopia):
 
     f1 = plt.figure()
     plt.bar(alfabeto, FreqAlfa,0.5 , color='#deb0b0', edgecolor='black',label="Alfabeto Usual")
@@ -113,7 +113,7 @@ def alfagraphplot(FreqAlfa, Freq):
     plt.close()
 
     f2 = plt.figure()
-    plt.bar(alfabeto, Freq,0.5, color='#b0c4de', align='center', edgecolor='black', label ="Dados novos")
+    plt.bar(alfacopia, Freq,0.5, color='#b0c4de', align='center', edgecolor='black', label ="Dados novos")
     plt.legend()
     plt.savefig('freqenc.png', bbox_inches='tight')
     plt.close()
@@ -174,15 +174,15 @@ def encontraTamanhosProvaveis(ciphertext):
 
 ##########################################################################################################################################
 
-################################################  SEGUNDA PARTE- QUEBRA DE CIFRA ###########################################################
+################################################  CODIGO PARA FRONT USO DO PYGAME ###########################################################
 class Apresentacao:
     def __init__(self):
         print("Presentation: Initializing!")
         pygame.init()
         self.white = (255,255,255)
         self.black = (0,0,0)
-        self.X = 700
-        self.Y = 700
+        self.X = 750
+        self.Y = 750
         self.textbuffer =""
         self.display_surface = pygame.display.set_mode((self.X,self.Y))
         self.font = pygame.font.Font(None,32)
@@ -232,9 +232,98 @@ class Apresentacao:
 
                         case 3:  # Crack
                             text = self.TelaInput(["Insira o nome do arquivo de texto"])
+                            R_text = getstring(text[0])
+                            tamanhosdechaves = encontraTamanhosProvaveis(R_text)
+                            escolha = self.TelaEscolhaChave(tamanhosdechaves)
+                            frequencias = achar_frequencias(escolha,R_text)
+                            resposta = self.TelaCrack(escolha, frequencias)
+                            putstring(resposta, "ResultadoCrack.txt")
+                            self.TelaInput(["Resultado salvo em arquivo ResultadoCrack"])
+
+
                             # Tela crack                   
-               
-    def TelaCrack(self):
+
+    def TelaCrack(self,escolha, frequencias):
+        resposta = ""
+
+        for i in range(escolha):
+            freqtemp = frequencias[i]
+            alfacopia = alfabeto
+
+            escolhido = False
+
+            while(not escolhido):
+
+                alfagraphplot(FreqEng, freqtemp,alfacopia)
+                FreqAlfaimg = pygame.image.load("alfabeto.png")
+                FreqEncimg = pygame.image.load("freqenc.png")
+                FreqAlfaimg = pygame.transform.scale(FreqAlfaimg,(490,350))
+                FreqEncimg = pygame.transform.scale(FreqEncimg,(490,350))
+
+                match self.LetraCrack(FreqAlfaimg, FreqEncimg,i,resposta):
+                    case 0:
+                        freqtemp = shift_right(freqtemp)
+                        alfacopia = shift_right(alfacopia)
+                    case 1:
+                        freqtemp = shift_left(freqtemp)
+                        alfacopia = shift_left(alfacopia)
+                    case 2:
+                        resposta+=alfacopia[0]
+                        escolhido = True
+        return resposta
+
+
+         
+
+
+    
+    def LetraCrack(self,FreqAlfaimg,FreqEncimg,j,resposta):
+        text1 = self.BlipText(f'Letra nº {j}', 625,200)
+        text2 = self.BlipText(resposta, 350,710)
+        texts = [self.BlipText('==>', 650,100),self.BlipText('<==', 600,100), self.BlipText("Escolher", 625, 150)]
+       
+        while True:
+            self.display_surface.fill(self.white)
+            for text in texts:
+                self.display_surface.blit(text[0],text[1])
+            self.display_surface.blit(text1[0],text1[1])
+            self.display_surface.blit(text2[0],text2[1])
+
+            self.display_surface.blit(FreqAlfaimg, (0,0))
+            self.display_surface.blit(FreqEncimg, (0,350))
+    
+            for event in pygame.event.get():
+                for i in range(len(texts)):
+                    if self.ClickText(texts[i],event):
+                        return i
+                
+                self.CheckQuit(event)
+            pygame.display.update()
+
+
+
+
+    def TelaEscolhaChave(self,tamanhos):
+        text1 = self.BlipText("Escolha um tamanho de chave,do com mais incidências para menos", self.X//2,self.Y//4)
+        texts = [self.BlipText(str(tamanhos[i]), self.X//2, self.Y//3 + 50*i) for i in range(len(tamanhos))]
+
+        while True:
+            self.display_surface.fill(self.white)
+            for text in texts:
+                self.display_surface.blit(text[0],text[1])
+            self.display_surface.blit(text1[0],text1[1])
+
+            for event in pygame.event.get():
+                for i in range(len(texts)):
+                    if self.ClickText(texts[i],event):
+                        return tamanhos[i]
+                
+                self.CheckQuit(event)
+
+            pygame.display.update()
+
+
+
         pass
     def TelaInicial(self):
         text1 = self.BlipText("Encrypt", self.X//2,self.Y//4)
@@ -347,3 +436,7 @@ def putstring(string,filename):
         text_file.write(string)
 
 Iniciar = Apresentacao()
+texto_cifrado = encrypt(chave_teste, texto_teste)
+print(texto_cifrado)
+print(encontrarEspacosTriosRepetidos(texto_cifrado))
+print(encontraTamanhosProvaveis(texto_cifrado))
