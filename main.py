@@ -205,12 +205,14 @@ class Apresentacao:
 
                         case 2:  #dec
                             text, key= self.TelaInput(["Insira o texto cifrado","Insira a chave"])
+                            text = normalize(text)
                             resultado = decrypt(key, text)
                             putstring(resultado, "ResultadoDecifacao.txt")
                             self.TelaInput(["Resultado salvo em arquivo ResultadoDecifracao"])
 
                         case 3:  # Crack
                             R_text = self.TelaInput(["Insira o texto cifrado"])
+                            R_text = normalize(R_text)
                             tamanhosdechaves, vezes = encontraTamanhosProvaveis(R_text)
                             escolha = self.TelaEscolhaChave(tamanhosdechaves,vezes)
                             while(True):
@@ -241,6 +243,7 @@ class Apresentacao:
                         case 2:  #dec
                             text, key  = self.TelaInput(["Insira o nome do arquivo de texto","Insira o nome do arquivo de chave"])
                             R_text = getstring(text)
+                            R_text = normalize(R_text)
                             R_key = getstring(key)
                             resultado = encrypt(R_key, R_text)
                             putstring(resultado, "ResultadoDecifracao.txt")
@@ -249,6 +252,7 @@ class Apresentacao:
                         case 3:  # Crack
                             text = self.TelaInput(["Insira o nome do arquivo de texto"])
                             R_text = getstring(text[0])
+                            R_text = normalize(R_text)
                             tamanhosdechaves ,vezes= encontraTamanhosProvaveis(R_text)
                             escolha = self.TelaEscolhaChave(tamanhosdechaves,vezes)
                             while(True):
