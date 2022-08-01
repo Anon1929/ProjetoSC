@@ -89,7 +89,7 @@ def achar_frequencias(tamanho_chave, texto):
     for incid in incid_pos:
         freq_inc = [0]*26
         for letra in incid:
-            freq_inc[ord(letra)-ord('A')] +=1
+            freq_inc[ord(letra.upper())-ord('A')] +=1
         freq_inc = [100*x / sum(freq_inc) for x in freq_inc]
         freqs.append(freq_inc)
     return freqs
@@ -180,7 +180,6 @@ def encontraTamanhosProvaveis(ciphertext):
 ################################################  CODIGO PARA FRONT USO DO PYGAME ###########################################################
 class Apresentacao:
     def __init__(self):
-        print("Presentation: Initializing!")
         pygame.init()
         self.white = (255,255,255)
         self.black = (0,0,0)
@@ -303,7 +302,7 @@ class Apresentacao:
 
     
     def LetraCrack(self,FreqAlfaimg,FreqEncimg,j,resposta):
-        text1 = self.BlipText(f'Letra nº {j}', 625,200)
+        text1 = self.BlipText(f'Letra nº {j+1}', 625,200)
         text2 = self.BlipText(resposta, 350,710)
         texts = [self.BlipText('==>', 650,100),self.BlipText('<==', 600,100), self.BlipText("Escolher", 625, 150)]
        
@@ -362,7 +361,7 @@ class Apresentacao:
             self.display_surface.blit(text1[0],text1[1])
             self.display_surface.blit(text2[0],text2[1])
             self.display_surface.blit(text3[0],text3[1])
-            self.display_surface.blit(image, (400,550))
+            self.display_surface.blit(image, (self.X//3 - 20,420))
 
             for event in pygame.event.get():
                 if self.ClickText(text1,event):
@@ -390,7 +389,7 @@ class Apresentacao:
             self.display_surface.fill(self.white)
             for text in texts:
                 self.display_surface.blit(text[0],text[1])
-            self.display_surface.blit(image, (350,550))
+            self.display_surface.blit(image, (self.X//3 - 20,420))
 
             for event in pygame.event.get():
                 for i in range(len(texts)):
